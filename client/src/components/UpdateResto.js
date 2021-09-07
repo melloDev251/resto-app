@@ -10,8 +10,9 @@ const UpdateResto = (props) => {
   const [priceRange, setPriceRange] = useState("");
 
   const { id } = useParams();
+  // console.log(id);
   let history = useHistory();
-  //   const { restaurant } = useContext(RestoContext);
+  // const { restaurant } = useContext(RestoContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +25,7 @@ const UpdateResto = (props) => {
       } catch (err) {}
     };
     fetchData();
-  }, [id]); 
+  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ const UpdateResto = (props) => {
 
   return (
     <div>
+      {/* <h1> {restaurant[0].location} </h1> */}
       <form action="">
         <div className="form-group mb-3">
           <label htmlFor="name">Name</label>
@@ -61,13 +63,26 @@ const UpdateResto = (props) => {
         </div>
         <div className="form-group">
           <label htmlFor="price_range">Price range (1 à 5)</label>
-          <input
+          <select
+            className="custom-select mr-sm-2"
+            id="price_range"
+            value={priceRange}
+            onChange={(e) => setPriceRange(e.target.value)}
+          >
+            <option value="1">$</option>
+            <option value="2">$$</option>
+            <option value="3">$$$</option>
+            <option value="4">$$$$</option>
+            <option value="5">$$$$$</option>
+          </select>
+
+          {/* <input
             type="number"
             className="form-control"
             id="price_range"
             value={priceRange}
             onChange={(e) => setPriceRange(e.target.value)}
-          />
+          /> */}
         </div>
         <button
           onClick={handleSubmit}
