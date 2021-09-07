@@ -5,7 +5,7 @@ import { RestoContext } from "../context/RestoContext";
 
 const RestoList = (props) => {
   const { restaurant, setRestaurant } = useContext(RestoContext);
-  let history = useHistory()
+  let history = useHistory();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,17 +17,25 @@ const RestoList = (props) => {
     fetchData();
   }, [setRestaurant]);
 
-  const handleUpdate = (id) => {
-    history.push(`/resto/${id}/update`)
-  }
+  const handleUpdate = (e, id) => {
+    e.stopPropagation();
+    history.push(`/resto/${id}/update`);
+  };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     try {
       await RestoApi.delete(`/${id}`);
-      setRestaurant(restaurant.filter((resto)=>{
-        return resto.id !== id
-      }))
+      setRestaurant(
+        restaurant.filter((resto) => {
+          return resto.id !== id;
+        })
+      );
     } catch (err) {}
+  };
+
+  const handleClickedResto = (id) => {
+    history.push(`/resto/${id}/detail`);
   };
 
   return (
@@ -44,24 +52,32 @@ const RestoList = (props) => {
             </tr>
           </thead>
           <tbody>
-            {restaurant.map((item) => {
+            {restaurant.map((resto) => {
               return (
                 <>
-                  <tr key={item.id}>
-                    <td> {item.name} </td>
-                    <td> {item.location} </td>
-                    <td> {"💲".repeat(item.price_range)} </td>
+                  <tr
+                    onClick={() => handleClickedResto(resto.id)}
+                    key={resto.id}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td> {resto.name} </td>
+                    <td> {resto.location} </td>
+                    <td> {"💲".repeat(resto.price_range)} </td>
                     <td> reviews </td>
                     <td>
-                      <button className="btn btn-warning mr-1" onClick={()=>handleUpdate(item.id)}>
+                      <button
+                        className="btn btn-warning mr-1"
+                        onClick={(e) => handleUpdate(e, resto.id)}
+                      >
                         <i className="fas fa-edit"></i>
                       </button>
                       <button
                         className="btn btn-danger"
-                        onClick={() => {
-                          if(window.confirm("Voulez vous supprimer ?")) {
-                            handleDelete(item.id)
-                          }
+                        onClick={(e) => {
+                          // if (window.confirm("Voulez vous supprimer ?")) {
+                          // }
+                          handleDelete(e, resto.id);
+                          window.alert("delete successfully !")
                         }}
                       >
                         <i className="fas fa-trash"></i>

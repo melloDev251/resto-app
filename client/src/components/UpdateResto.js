@@ -24,7 +24,7 @@ const UpdateResto = (props) => {
       } catch (err) {}
     };
     fetchData();
-  }, [id]);
+  }, [id]); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ const UpdateResto = (props) => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="price_range">Price range</label>
+          <label htmlFor="price_range">Price range (1 à 5)</label>
           <input
             type="number"
             className="form-control"

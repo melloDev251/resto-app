@@ -17,7 +17,7 @@ app.use((req, res, next) => {
 });
 
 // express
-// app.use(express.json())    
+// app.use(express.json())
 
 // cors
 const cors = require("cors");
@@ -51,14 +51,20 @@ app.get("/api/v1/restaurants", async (req, res) => {
 // get one resto
 app.get("/api/v1/restaurants/:id", async (req, res) => {
   try {
-    const results = await db.query("select * from restaurants where id = $1", [
+    const restaurant = await db.query(
+      "select * from restaurants where id = $1",
+      [req.params.id]
+    );
+
+    const reviews = await db.query("select * from reviews where id = $1", [
       req.params.id,
     ]);
-    console.log(results.rows[0]);
+    console.log(restaurant.rows[0]);
     res.status(200).json({
       status: "success",
       data: {
-        restaurant: results.rows[0],
+        restaurant: restaurant.rows[0],
+        reviews: reviews.rows,
       },
     });
   } catch (err) {
@@ -122,8 +128,7 @@ app.delete("/api/v1/restaurants/:id", async (req, res) => {
   }
 });
 
-
 // server
 app.listen(process.env.PORT, () => {
   console.log(`Listening on port ${process.env.PORT}`);
-});     
+});

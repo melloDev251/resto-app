@@ -56,7 +56,7 @@ const AddResto = () => {
               className="custom-select mr-sm-2"
               onChange={(e) => setPriceRange(e.target.value)}
             >
-              <option>price range</option>
+              <option>select your price range</option>
               <option value="1">$</option>
               <option value="2">$$</option>
               <option value="3">$$$</option>
