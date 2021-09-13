@@ -1,9 +1,32 @@
 import React, { useState } from "react";
+import { useHistory, useLocation, useParams } from "react-router";
+import RestoApi from "../api/RestoApi";
 
 const AddReview = () => {
+  const { id } = useParams();
+  const history = useHistory();
   const [name, setName] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState("rating");
+
+  const location = useLocation();
+  // console.log(location);
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await RestoApi.post(`/${id}/addReview`, {
+        name,
+        review: reviewText,
+        rating,
+      });
+      history.push("/");
+      history.push(location.pathname);
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className="mb-2">
       <form action="">
@@ -43,11 +66,18 @@ const AddReview = () => {
             value={reviewText}
             id="review"
             cols="30"
-            rows="10"
+            rows="8"
             className="form-control"
             onChange={(e) => setReviewText(e.target.value)}
           />
         </div>
+        <button
+          onClick={handleSubmitReview}
+          type="submit"
+          className="btn btn-primary"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );

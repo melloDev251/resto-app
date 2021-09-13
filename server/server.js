@@ -34,13 +34,17 @@ app.use(cors(corsOptions));
 // get all resto
 app.get("/api/v1/restaurants", async (req, res) => {
   try {
-    const results = await db.query("select * from restaurants");
-    console.log(results);
+    // const results = await db.query("select * from restaurants");
+    const restoRatingData = await db.query(
+      "select * from restaurants left join (select restaurant_id, count(*), trunc(avg(rating),1) as average_rating from reviews group by restaurant_id) reviews on restaurants.id = reviews.restaurant_id"
+    );
+    // console.log("results",results);
+    console.log("restaurant data", restoRatingData);
     res.status(200).json({
       status: "success",
-      results: results.rowCount.length,
+      results: restoRatingData.rowCount.length,
       data: {
-        restaurant: results.rows,
+        restaurant: restoRatingData.rows,
       },
     });
   } catch (err) {
@@ -52,13 +56,14 @@ app.get("/api/v1/restaurants", async (req, res) => {
 app.get("/api/v1/restaurants/:id", async (req, res) => {
   try {
     const restaurant = await db.query(
-      "select * from restaurants where id = $1",
+      "select * from restaurants left join (select restaurant_id, count(*), trunc(avg(rating),1) as average_rating from reviews group by restaurant_id) reviews on restaurants.id = reviews.restaurant_id where id = $1",
       [req.params.id]
     );
 
-    const reviews = await db.query("select * from reviews where id = $1", [
-      req.params.id,
-    ]);
+    const reviews = await db.query(
+      "select * from reviews where restaurant_id = $1",
+      [req.params.id]
+    );
     console.log(restaurant.rows[0]);
     res.status(200).json({
       status: "success",
@@ -122,6 +127,26 @@ app.delete("/api/v1/restaurants/:id", async (req, res) => {
 
     res.status(204).json({
       status: "success",
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// add review
+app.post("/api/v1/restaurants/:id/addReview", async (req, res) => {
+  try {
+    const rb = req.body;
+    const newReview = await db.query(
+      "insert into reviews (restaurant_id, name, review, rating) values ($1, $2, $3, $4) returning * ",
+      [req.params.id, rb.name, rb.review, rb.rating]
+    );
+    // console.log(newReview);
+    res.status(201).json({
+      status: "success",
+      data: {
+        review: newReview.rows[0],
+      },
     });
   } catch (err) {
     console.log(err);
