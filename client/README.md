@@ -2,6 +2,10 @@
 
 yarn add ou npm install
 
+## Database file
+
+import database file resto.sql
+
 ## Launch of the back-end and front-end server
 
 npm start
